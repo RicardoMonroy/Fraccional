@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraccional - Gestión de Condominios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-blue-primary': '#1976D2',
+                        'brand-blue-dark': '#115293',
+                        'brand-teal-accent': '#26A69A',
+                        'brand-background': '#F5F7FB',
+                        'brand-gray-light': '#90A4AE',
+                        'brand-red-alert': '#EF5350',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.294.0/umd/lucide.min.js" rel="stylesheet">
+</head>
+<body class="bg-brand-background">
+    <!-- Header -->
+    <header class="border-b bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="building-2" class="h-8 w-8 text-brand-blue-primary"></i>
+                <h1 class="text-2xl font-bold text-brand-blue-dark">Fraccional</h1>
+            </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#features" class="text-gray-600 hover:text-brand-blue-primary">Características</a>
+                <a href="#pricing" class="text-gray-600 hover:text-brand-blue-primary">Precios</a>
+                <a href="#contact" class="text-gray-600 hover:text-brand-blue-primary">Contacto</a>
+            </nav>
+            <div class="flex space-x-4">
+                <a href="/auth/login" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-gray-300 bg-white hover:bg-gray-50 hover:text-brand-blue-primary h-10 py-2 px-4">
+                    Iniciar Sesión
+                </a>
+                <a href="/auth/signup" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-brand-blue-primary text-white hover:bg-brand-blue-dark h-10 py-2 px-4">
+                    Comenzar
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="flex-1 py-20 px-4">
+        <div class="container mx-auto text-center">
+            <h2 class="text-5xl font-bold text-brand-blue-dark mb-6">
+                Gestión Simplificada de
+                <span class="text-brand-blue-primary block">Condominios y Fraccionamientos</span>
+            </h2>
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                La plataforma SaaS que revoluciona la administración de condominios. 
+                Gestiona propiedades, residents, pagos y comunicaciones en un solo lugar.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/auth/signup" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-brand-blue-primary text-white hover:bg-brand-blue-dark h-11 px-8">
+                    Comenzar como Administrador
+                </a>
+                <a href="#demo" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-gray-300 bg-white hover:bg-gray-50 hover:text-brand-blue-primary h-11 px-8">
+                    Ver Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 bg-white">
+        <div class="container mx-auto">
+            <h3 class="text-3xl font-bold text-center text-brand-blue-dark mb-12">
+                Todo lo que necesitas para gestionar tu condominio
+            </h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="rounded-lg border border-gray-200 bg-white text-card-foreground shadow-sm text-center">
+                    <div class="p-6">
+                        <i data-lucide="building-2" class="h-12 w-12 text-brand-blue-primary mx-auto mb-4"></i>
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight mb-4">Gestión de Propiedades</h3>
+                        <p class="text-sm text-gray-600">
+                            Administra casas, propietarios y residents de manera eficiente
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rounded-lg border border-gray-200 bg-white text-card-foreground shadow-sm text-center">
+                    <div class="p-6">
+                        <i data-lucide="dollar-sign" class="h-12 w-12 text-brand-teal-accent mx-auto mb-4"></i>
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight mb-4">Control Financiero</h3>
+                        <p class="text-sm text-gray-600">
+                            Gestiona cuotas, pagos y reportes financieros en tiempo real
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rounded-lg border border-gray-200 bg-white text-card-foreground shadow-sm text-center">
+                    <div class="p-6">
+                        <i data-lucide="users" class="h-12 w-12 text-brand-blue-primary mx-auto mb-4"></i>
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight mb-4">Comunicación</h3>
+                        <p class="text-sm text-gray-600">
+                            Publica avisos, documentos y mantén comunicación constante
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rounded-lg border border-gray-200 bg-white text-card-foreground shadow-sm text-center">
+                    <div class="p-6">
+                        <i data-lucide="shield" class="h-12 w-12 text-brand-teal-accent mx-auto mb-4"></i>
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight mb-4">Seguridad</h3>
+                        <p class="text-sm text-gray-600">
+                            Registra y gestiona incidencias de manera organizada
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-4">
+        <div class="container mx-auto text-center">
+            <h3 class="text-3xl font-bold text-brand-blue-dark mb-12">
+                Planes diseñados para tu condominio
+            </h3>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="rounded-lg border border-gray-200 bg-white text-card-foreground shadow-sm relative">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight mb-2">Básico</h3>
+                        <p class="text-sm text-gray-600 mb-4">Para condominios pequeños</p>
+                        <div class="text-3xl font-bold text-brand-blue-primary mb-4">$299<span class="text-lg">/mes</span></div>
+                        <ul class="text-left space-y-2">
+                            <li>• Hasta 20 casas</li>
+                            <li>• Gestión básica de pagos</li>
+                            <li>• Avisos y documentos</li>
+                            <li>• Soporte por email</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="rounded-lg border-2 border-brand-blue-primary bg-white text-card-foreground shadow-sm relative">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-brand-blue-primary text-white px-3 py-1 rounded-full text-sm">Popular</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight mb-2">Profesional</h3>
+                        <p class="text-sm text-gray-600 mb-4">Para condominios medianos</p>
+                        <div class="text-3xl font-bold text-brand-blue-primary mb-4">$599<span class="text-lg">/mes</span></div>
+                        <ul class="text-left space-y-2">
+                            <li>• Hasta 50 casas</li>
+                            <li>• Gestión completa de pagos</li>
+                            <li>• Reportes avanzados</li>
+                            <li>• Gestión de incidencias</li>
+                            <li>• Soporte prioritario</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="rounded-lg border border-gray-200 bg-white text-card-foreground shadow-sm relative">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight mb-2">Enterprise</h3>
+                        <p class="text-sm text-gray-600 mb-4">Para grandes fraccionamientos</p>
+                        <div class="text-3xl font-bold text-brand-blue-primary mb-4">$999<span class="text-lg">/mes</span></div>
+                        <ul class="text-left space-y-2">
+                            <li>• Casas ilimitadas</li>
+                            <li>• Funcionalidades completas</li>
+                            <li>• API personalizada</li>
+                            <li>• Soporte dedicado</li>
+                            <li>• Capacitación incluida</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4 bg-brand-blue-primary text-white">
+        <div class="container mx-auto text-center">
+            <h3 class="text-3xl font-bold mb-6">
+                ¿Listo para revolucionar la gestión de tu condominio?
+            </h3>
+            <p class="text-xl mb-8 opacity-90">
+                Únete a cientos de administradores que ya confían en Fraccional
+            </p>
+            <a href="/auth/signup" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-white text-brand-blue-primary hover:bg-gray-100 h-11 px-8">
+                Comenzar Gratis
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 px-4">
+        <div class="container mx-auto">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i data-lucide="building-2" class="h-6 w-6"></i>
+                        <span class="text-xl font-bold">Fraccional</span>
+                    </div>
+                    <p class="text-gray-400">
+                        La plataforma líder en gestión de condominios y fraccionamientos.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Producto</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#features">Características</a></li>
+                        <li><a href="#pricing">Precios</a></li>
+                        <li><a href="#demo">Demo</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Empresa</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#about">Acerca de</a></li>
+                        <li><a href="#contact">Contacto</a></li>
+                        <li><a href="#blog">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Soporte</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#help">Ayuda</a></li>
+                        <li><a href="#docs">Documentación</a></li>
+                        <li><a href="#status">Estado del servicio</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Fraccional. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

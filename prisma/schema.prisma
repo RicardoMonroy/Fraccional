@@ -1,0 +1,453 @@
+// Prisma schema for Fraccional condominium management system
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================================================
+// AUTHENTICATION & USER MANAGEMENT
+// =====================================================
+
+model Usuario {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  nombre       String?
+  telefono     String?
+  activo       Boolean  @default(true)
+  creadoEn     DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+  
+  // Relations
+  usuariosRolesFraccionamiento UsuariosRolesFraccionamiento[]
+  propietariosCasas           PropietariosCasas[]
+  habitantesCasas             HabitantesCasas[]
+  cargos                      Cargo[] @relation("CargoCreatedBy")
+  pagosAprobados              Pago[] @relation("PagoApprovedBy")
+  pagosRechazados             Pago[] @relation("PagoRejectedBy")
+  avisos                      Aviso[]
+  documentos                  Documento[]
+  incidenciasReportadas       Incidencia[] @relation("IncidenciaReportadaPor")
+  incidenciasAsignadas        Incidencia[] @relation("IncidenciaAsignadaA")
+  comentariosIncidencias      IncidenciasComentarios[]
+  pagosCondominioAprobados    PagosCondominio[] @relation("PagosCondominioApprovedBy")
+  pagosCondominioRechazados   PagosCondominio[] @relation("PagosCondominioRejectedBy")
+  
+  @@map("usuarios")
+}
+
+model Rol {
+  id               Int      @id @default(autoincrement())
+  nombre           String   @unique
+  descripcion      String?
+  nivelPermisos    Int      @default(1)
+  activo           Boolean  @default(true)
+  creadoEn         DateTime @default(now())
+  actualizadoEn    DateTime @updatedAt
+  
+  // Relations
+  usuariosRolesFraccionamiento UsuariosRolesFraccionamiento[]
+  
+  @@map("roles")
+}
+
+model UsuariosRolesFraccionamiento {
+  id                String    @id @default(uuid())
+  usuarioId         String
+  fraccionamientoId String?
+  rolId             Int
+  esPrincipal       Boolean   @default(false)
+  accesoHabilitado  Boolean   @default(true)
+  fechaAsignacion   DateTime  @default(now())
+  creadoEn          DateTime  @default(now())
+  
+  // Relations
+  usuario         Usuario         @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  fraccionamiento Fraccionamiento? @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  rol             Rol             @relation(fields: [rolId])
+  
+  @@unique([usuarioId, fraccionamientoId, rolId])
+  @@map("usuarios_roles_fraccionamiento")
+}
+
+// =====================================================
+// SUBSCRIPTION MANAGEMENT
+// =====================================================
+
+model Paquete {
+  id               Int      @id @default(autoincrement())
+  nombre           String   @unique
+  descripcion      String?
+  precioMensual    Decimal  @db.Decimal(10, 2)
+  maxCasas         Int
+  caracteristicas  Json?
+  activo           Boolean  @default(true)
+  creadoEn         DateTime @default(now())
+  actualizadoEn    DateTime @updatedAt
+  
+  // Relations
+  condominiosSuscripciones CondominiosSuscripciones[]
+  landingPaquetesDetalle    LandingPaquetesDetalle[]
+  
+  @@map("paquetes")
+}
+
+model Fraccionamiento {
+  id               String    @id @default(uuid())
+  nombre           String
+  direccion        String?
+  ciudad           String?
+  estado           String?
+  codigoPostal     String?
+  telefono         String?
+  email            String?
+  logoUrl          String?
+  configuracion    Json?
+  estadoServicio   String    @default("ACTIVO") // ACTIVO, SUSPENDIDO, CANCELADO
+  fechaSuspension  DateTime?
+  activo           Boolean   @default(true)
+  creadoEn         DateTime  @default(now())
+  actualizadoEn    DateTime  @updatedAt
+  
+  // Relations
+  usuariosRolesFraccionamiento UsuariosRolesFraccionamiento[]
+  casas                           Casa[]
+  condominiosSuscripciones       CondominiosSuscripciones[]
+  cargos                          Cargo[]
+  pagos                           Pago[]
+  avisos                          Aviso[]
+  documentos                      Documento[]
+  incidencias                     Incidencia[]
+  pagosCondominio                 PagosCondominio[]
+  
+  @@map("fraccionamientos")
+}
+
+model CondominiosSuscripciones {
+  id              String    @id @default(uuid())
+  fraccionamientoId String
+  paqueteId       Int
+  fechaInicio     DateTime
+  fechaFin        DateTime?
+  estado          String    @default("ACTIVA") // ACTIVA, EXPIRADA, CANCELADA
+  precioPagado    Decimal?  @db.Decimal(10, 2)
+  notas           String?
+  creadoEn        DateTime  @default(now())
+  actualizadoEn   DateTime  @updatedAt
+  
+  // Relations
+  fraccionamiento Fraccionamiento @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  paquete         Paquete         @relation(fields: [paqueteId])
+  
+  @@map("condominios_suscripciones")
+}
+
+// =====================================================
+// PROPERTY MANAGEMENT
+// =====================================================
+
+model Casa {
+  id                   String    @id @default(uuid())
+  fraccionamientoId    String
+  numeroCasa           String
+  direccionEspecifica  String?
+  metraje              Decimal?  @db.Decimal(8, 2)
+  habitaciones         Int       @default(1)
+  banos                Int       @default(1)
+  cochera              Boolean   @default(false)
+  caracteristicas      Json?
+  activo               Boolean   @default(true)
+  creadoEn             DateTime  @default(now())
+  actualizadoEn        DateTime  @updatedAt
+  
+  // Relations
+  fraccionamiento    Fraccionamiento     @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  propietariosCasas  PropietariosCasas[]
+  habitantesCasas    HabitantesCasas[]
+  cargos             Cargo[]
+  pagos              Pago[]
+  incidencias        Incidencia[]
+  
+  @@unique([fraccionamientoId, numeroCasa])
+  @@map("casas")
+}
+
+model PropietariosCasas {
+  id                  String    @id @default(uuid())
+  casaId              String
+  usuarioId           String
+  fechaAdquisicion    DateTime?
+  porcentajePropiedad Decimal   @default(100.00) @db.Decimal(5, 2)
+  esPropietarioPrincipal Boolean @default(true)
+  activo              Boolean   @default(true)
+  creadoEn            DateTime  @default(now())
+  
+  // Relations
+  casa    Casa    @relation(fields: [casaId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  @@unique([casaId, usuarioId])
+  @@map("propietarios_casas")
+}
+
+model HabitantesCasas {
+  id             String    @id @default(uuid())
+  casaId         String
+  usuarioId      String
+  tipoHabitante  String    @default("RESIDENTE") // RESIDENTE, FAMILIAR, EMPLEADO
+  fechaIngreso   DateTime?
+  fechaSalida    DateTime?
+  activo         Boolean   @default(true)
+  creadoEn       DateTime  @default(now())
+  
+  // Relations
+  casa    Casa    @relation(fields: [casaId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  @@unique([casaId, usuarioId])
+  @@map("habitantes_casas")
+}
+
+// =====================================================
+// FINANCIAL MANAGEMENT
+// =====================================================
+
+model Cargo {
+  id               String    @id @default(uuid())
+  fraccionamientoId String
+  casaId           String
+  tipoCargo        String    // CUOTA_ORDINARIA, CUOTA_EXTRAORDINARIA, MULTA, RECARGO
+  concepto         String
+  monto            Decimal   @db.Decimal(10, 2)
+  fechaVencimiento DateTime
+  estado           String    @default("PENDIENTE") // PENDIENTE, PAGADO, VENCIDO, CONDONADO
+  mesCubierto      DateTime?
+  añoCubierto      Int?
+  createdBy        String?
+  creadoEn         DateTime  @default(now())
+  actualizadoEn    DateTime  @updatedAt
+  
+  // Relations
+  fraccionamiento Fraccionamiento @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  casa            Casa            @relation(fields: [casaId], references: [id], onDelete: Cascade)
+  createdByUser   Usuario?        @relation("CargoCreatedBy", fields: [createdBy], references: [id])
+  pagos           Pago[]
+  
+  @@map("cargos")
+}
+
+model Pago {
+  id                  String    @id @default(uuid())
+  fraccionamientoId   String
+  casaId              String
+  cargoId             String?
+  monto               Decimal   @db.Decimal(10, 2)
+  fechaPago           DateTime
+  metodoPago          String?   // EFECTIVO, TRANSFERENCIA, CHEQUE, TARJETA
+  referenciaBancaria  String?
+  estado              String    @default("PENDIENTE") // PENDIENTE, APROBADO, RECHAZADO
+  comprobanteUrl      String?
+  observaciones       String?
+  approvedBy          String?
+  approvedAt          DateTime?
+  rejectedBy          String?
+  rejectedAt          DateTime?
+  motivoRechazo       String?
+  creadoEn            DateTime  @default(now())
+  actualizadoEn       DateTime  @updatedAt
+  
+  // Relations
+  fraccionamiento Fraccionamiento @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  casa            Casa            @relation(fields: [casaId], references: [id], onDelete: Cascade)
+  cargo           Cargo?          @relation(fields: [cargoId], references: [id], onDelete: SetNull)
+  approvedByUser  Usuario?        @relation("PagoApprovedBy", fields: [approvedBy], references: [id])
+  rejectedByUser  Usuario?        @relation("PagoRejectedBy", fields: [rejectedBy], references: [id])
+  
+  @@map("pagos")
+}
+
+model PagosCondominio {
+  id                 String    @id @default(uuid())
+  fraccionamientoId  String
+  monto              Decimal   @db.Decimal(10, 2)
+  fechaPago          DateTime
+  periodoMes         Int
+  periodoAño         Int
+  metodoPago         String?
+  referenciaBancaria String?
+  estado             String    @default("PENDIENTE") // PENDIENTE, APROBADO, RECHAZADO
+  comprobanteUrl     String?
+  observaciones      String?
+  approvedBy         String?
+  approvedAt         DateTime?
+  rejectedBy         String?
+  rejectedAt         DateTime?
+  motivoRechazo      String?
+  creadoEn           DateTime  @default(now())
+  actualizadoEn      DateTime  @updatedAt
+  
+  // Relations
+  fraccionamiento Fraccionamiento @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  approvedByUser  Usuario?        @relation("PagosCondominioApprovedBy", fields: [approvedBy], references: [id])
+  rejectedByUser  Usuario?        @relation("PagosCondominioRejectedBy", fields: [rejectedBy], references: [id])
+  
+  @@map("pagos_condominio")
+}
+
+// =====================================================
+// COMMUNICATION & DOCUMENTATION
+// =====================================================
+
+model Aviso {
+  id               String    @id @default(uuid())
+  fraccionamientoId String
+  titulo           String
+  contenido        String
+  tipoAviso        String    @default("GENERAL") // GENERAL, URGENTE, MANTENIMIENTO, EVENTO
+  fechaPublicacion DateTime  @default(now())
+  fechaVencimiento DateTime?
+  publicadoPor     String
+  esDestacado      Boolean   @default(false)
+  activo           Boolean   @default(true)
+  creadoEn         DateTime  @default(now())
+  actualizadoEn    DateTime  @updatedAt
+  
+  // Relations
+  fraccionamiento Fraccionamiento @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  publicadoPorUser Usuario        @relation(fields: [publicadoPor], references: [id])
+  
+  @@map("avisos")
+}
+
+model Documento {
+  id               String    @id @default(uuid())
+  fraccionamientoId String
+  nombre           String
+  descripcion      String?
+  categoria        String?   // REGLAMENTO, ACTA, CONTRATO, MANUAL, OTRO
+  archivoUrl       String
+  archivoNombre    String
+  archivoTamaño    Int?
+  mimeType         String?
+  esPublico        Boolean   @default(false)
+  subidoPor        String
+  fechaPublicacion DateTime  @default(now())
+  activo           Boolean   @default(true)
+  creadoEn         DateTime  @default(now())
+  actualizadoEn    DateTime  @updatedAt
+  
+  // Relations
+  fraccionamiento Fraccionamiento @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  subidoPorUser   Usuario        @relation(fields: [subidoPor], references: [id])
+  
+  @@map("documentos")
+}
+
+// =====================================================
+// INCIDENT MANAGEMENT
+// =====================================================
+
+model Incidencia {
+  id                String    @id @default(uuid())
+  fraccionamientoId String
+  casaId            String?
+  reportadoPor      String
+  asignadoA         String?
+  titulo            String
+  descripcion       String
+  categoria         String?   // MANTENIMIENTO, SEGURIDAD, RUIDO, LIMPIEZA, OTRO
+  prioridad         String    @default("MEDIA") // BAJA, MEDIA, ALTA, URGENTE
+  estado            String    @default("ABIERTA") // ABIERTA, EN_PROCESO, RESUELTA, CERRADA
+  ubicacionEspecifica String?
+  fechaResolucion   DateTime?
+  fechaCierre       DateTime?
+  costoEstimado     Decimal?  @db.Decimal(10, 2)
+  costoReal         Decimal?  @db.Decimal(10, 2)
+  creadoEn          DateTime  @default(now())
+  actualizadoEn     DateTime  @updatedAt
+  
+  // Relations
+  fraccionamiento   Fraccionamiento @relation(fields: [fraccionamientoId], references: [id], onDelete: Cascade)
+  casa              Casa?           @relation(fields: [casaId], references: [id], onDelete: SetNull)
+  reportadoPorUser  Usuario         @relation("IncidenciaReportadaPor", fields: [reportadoPor], references: [id])
+  asignadoAUser     Usuario?        @relation("IncidenciaAsignadaA", fields: [asignadoA], references: [id])
+  comentarios       IncidenciasComentarios[]
+  
+  @@map("incidencias")
+}
+
+model IncidenciasComentarios {
+  id           String    @id @default(uuid())
+  incidenciaId String
+  usuarioId    String
+  comentario   String
+  esInterno    Boolean   @default(false) // Solo para admins
+  creadoEn     DateTime  @default(now())
+  
+  // Relations
+  incidencia Incidencia @relation(fields: [incidenciaId], references: [id], onDelete: Cascade)
+  usuario    Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  @@map("incidencias_comentarios")
+}
+
+// =====================================================
+// LANDING PAGE MANAGEMENT
+// =====================================================
+
+model LandingConfig {
+  id                String    @id @default(uuid())
+  tituloPrincipal   String?
+  subtitulo         String?
+  descripcion       String?
+  colores           Json?     // Paleta de colores personalizada
+  configuracionGeneral Json?
+  activo            Boolean   @default(true)
+  creadoEn          DateTime  @default(now())
+  actualizadoEn     DateTime  @updatedAt
+  
+  // Relations
+  secciones         LandingSecciones[]
+  paquetesDetalle   LandingPaquetesDetalle[]
+  
+  @@map("landing_config")
+}
+
+model LandingSecciones {
+  id          String    @id @default(uuid())
+  landingId   String
+  tipoSeccion String    // HERO, CARACTERISTICAS, TESTIMONIOS, FAQ
+  titulo      String?
+  contenido   Json?
+  orden       Int       @default(0)
+  activo      Boolean   @default(true)
+  creadoEn    DateTime  @default(now())
+  actualizadoEn DateTime @updatedAt
+  
+  // Relations
+  landing LandingConfig @relation(fields: [landingId], references: [id], onDelete: Cascade)
+  
+  @@map("landing_secciones")
+}
+
+model LandingPaquetesDetalle {
+  id                    String    @id @default(uuid())
+  landingId             String
+  paqueteId             Int
+  descripcionLarga      String?
+  caracteristicasDestacadas Json?
+  precioPersonalizado   Decimal?  @db.Decimal(10, 2)
+  orden                 Int       @default(0)
+  activo                Boolean   @default(true)
+  creadoEn              DateTime  @default(now())
+  actualizadoEn         DateTime  @updatedAt
+  
+  // Relations
+  landing LandingConfig @relation(fields: [landingId], references: [id], onDelete: Cascade)
+  paquete  Paquete      @relation(fields: [paqueteId])
+  
+  @@map("landing_paquetes_detalle")
+}
